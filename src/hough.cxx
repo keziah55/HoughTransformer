@@ -6,13 +6,13 @@ HoughTransformer::HoughTransformer(const double thetaStep,
                                    const double thetaStart,
                                    const double thetaStop,
                                    const bool endpoint)
-    : thetaSize {static_cast<std::size_t>(round((thetaStop-thetaStart)/thetaStep))}
+: thetaSize {static_cast<std::size_t>(round((thetaStop-thetaStart)/thetaStep))}
 {
     // if endpoint was requested, we need one more theta value
     if (endpoint)
         thetaSize++;
 
-    // make lookup tables for sin and cos
+    // make lookup tables for sine and cosine
     sinLT = new double[thetaSize];
     cosLT = new double[thetaSize];
 
@@ -27,10 +27,12 @@ HoughTransformer::HoughTransformer(const double thetaStep,
 
 HoughTransformer::~HoughTransformer()
 {
+    delete[] cosLT;
+    delete[] sinLT;
 }
 
-void HoughTransformer::transform(double* inputSignal, std::size_t x_size,
-                                 std::size_t y_size=1)
+void HoughTransformer::transform(double* inputSignal, const std::size_t x_size,
+                                 const std::size_t y_size=1)
 {
 
 }
