@@ -31,9 +31,9 @@ protected:
     /*! Number of angle in look-up tables */
     std::size_t thetaSize;
     /*! Sine look-up table */
-    double* sinLT;
+    std::vector<double> sinLT;
     /*! Cosine look-up table */
-    double* cosLT;
+    std::vector<double> cosLT;
     /*! Array of x values */
     std::size_t* x_values;
     /*! Array of y values */
