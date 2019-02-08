@@ -21,13 +21,21 @@ public:
     *   \param inputSignal Input array
     *   \param x_size Array length
     *   \param y_size Array height. Default is 1.
+    *   \param sig_max Maximum value in input. Default is 1.
     */
     void transform(double* inputSignal, const std::size_t x_size,
-                   const std::size_t y_size=1);
+                   const std::size_t y_size=1,
+                   const double sig_max=1.);
 
     ~HoughTransformer();
 
 protected:
+    /*! input data */
+    double* inputSignal;
+    /*! input array length */
+    const std::size_t x_size;
+    /*! input array height */
+    const std::size_t y_size;
     /*! Number of angle in look-up tables */
     std::size_t thetaSize;
     /*! Sine look-up table */
@@ -35,15 +43,17 @@ protected:
     /*! Cosine look-up table */
     std::vector<double> cosLT;
     /*! Array of x values */
-    std::size_t* x_values;
+    std::vector<std::size_t> x_values;
     /*! Array of y values */
-    std::size_t* y_values;
+    std::vector<std::size_t> y_values;
     /*! Calculate rho from equation of straight line */
     int getRhoLine(std::size_t x, std::size_t y, std::size_t theta);
-    /*! Quantize values */
-    void quantize(std::size_t max, std::size_t steps); // take input and fill y values
+    /*! Fill y_values with quantized inputSignal */
+    void quantize(double maximum, std::size_t steps);
     /*! High pass filter (edge detector) */
     void edges();
+    /*! Round a double to a size_t */
+    std::size_t size_round(double value)
 }
 
 #endif
