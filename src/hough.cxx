@@ -30,7 +30,8 @@ HoughTransformer::~HoughTransformer()
     delete[] acc;
 }
 
-void HoughTransformer::transform(double* inputSignal, const std::size_t x_size,
+void HoughTransformer::transform(const double* inputSignal,
+                                 const std::size_t x_size,
                                  const std::size_t y_size, const double sig_max)
 {
     if (y_size == 1)

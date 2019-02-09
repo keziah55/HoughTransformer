@@ -23,7 +23,7 @@ public:
     *   \param y_size Array height. Default is 1.
     *   \param sig_max Maximum value in input. Default is 1.
     */
-    void transform(double* inputSignal, const std::size_t x_size,
+    void transform(const double* inputSignal, const std::size_t x_size,
                    const std::size_t y_size=1,
                    const double sig_max=1.);
 
