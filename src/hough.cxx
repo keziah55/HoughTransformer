@@ -82,16 +82,16 @@ void HoughTransformer::transform(const double* inputSignal,
 
 void HoughTransformer::write(std::vector<std::vector<int>> acc)
 {
-    write accumulator to file
+    // write accumulator to file
     std::ofstream file;
     file.open("hough.csv");
 
-    for each row in acc, write every value to file
+    // for each row in acc, write every value to file
     for (std::vector<int> v : acc) {
         for (int i{0}; i<v.size(); i++) {
             file << v[i];
-            in order to be read be numpy, commas should separate values,
-            but not appear at the end of a line
+            // in order to be read be numpy, commas should separate values,
+            // but not appear at the end of a line
             if (i < v.size()-1)
                 file << ",";
             }
