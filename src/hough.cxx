@@ -46,9 +46,12 @@ void HoughTransformer::transform(const double* inputSignal,
     // accumulator width
     std::size_t acc_width {2*r_max};
 
-    // accumulator 2D array ints
-    // using C style (and newing) because dimensions can't be const
-    int* acc = new int[thetaSize*acc_width];
+    // reserve all the space we need for the accumulator
+    // access elements: acc[rho][theta]
+    std::vector<std::vector<int>> acc;
+    acc.resize(thetaSize);
+    for (std::size_t i {0}; i<acc.size(); i++)
+        acc[i].resize(acc_width);
 
     // x may be read from x_values or inferred from inputSignal indices
     std::size_t x;
@@ -70,10 +73,28 @@ void HoughTransformer::transform(const double* inputSignal,
         // for all angles, get rho and increment accumulator
         for (std::size_t t {0}; t<thetaSize; t++) {
             rho = static_cast<std::size_t>(getRhoLine(x, y, t) + r_max);
-            acc[t*rho]++;
+            acc[rho][t]++;
         }
     }
-    delete[] acc;
+}
+
+void HoughTransformer::write(std::vector<std::vector<int>> acc)
+{
+    write accumulator to file
+    std::ofstream file;
+    file.open("hough.csv");
+
+    for each row in acc, write every value to file
+    for (std::vector<int> v : acc) {
+        for (int i{0}; i<v.size(); i++) {
+            file << v[i];
+            in order to be read be numpy, commas should separate values,
+            but not appear at the end of a line
+            if (i < v.size()-1)
+                file << ",";
+            }
+        file << "\n";
+    }
 }
 
 int HoughTransformer::getRhoLine(std::size_t x, std::size_t y,
