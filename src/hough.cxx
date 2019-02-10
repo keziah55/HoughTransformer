@@ -1,6 +1,7 @@
 #include <cmath>
 #include <vector>
 #include <stdexcept>
+#include <fstream>
 
 #include "hough.h"
 

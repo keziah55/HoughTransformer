@@ -51,6 +51,8 @@ protected:
     void edges();
     /*! Round a double to a size_t */
     std::size_t size_round(double value);
+    /*! Write accumulator to csv file */
+    void write(std::vector<std::vector<int>> acc);
 };
 
 #endif
