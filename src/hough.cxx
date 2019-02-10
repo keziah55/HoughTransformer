@@ -27,7 +27,6 @@ HoughTransformer::HoughTransformer(const double thetaStep,
 
 HoughTransformer::~HoughTransformer()
 {
-    delete[] acc;
 }
 
 void HoughTransformer::transform(const double* inputSignal,
@@ -74,6 +73,7 @@ void HoughTransformer::transform(const double* inputSignal,
             acc[t*rho]++;
         }
     }
+    delete[] acc;
 }
 
 int HoughTransformer::getRhoLine(std::size_t x, std::size_t y,
@@ -89,7 +89,7 @@ void HoughTransformer::quantize(double maximum, std::size_t steps)
     double q_factor {steps/maximum};
 
     // populate y_values vector
-    for (std::size_t i {0}; i<x_size; i++) {
+    for (std::size_t i {0}; i<steps; i++) {
         std::size_t q {size_round(inputSignal[i]*q_factor)};
         y_values.push_back(q);
     }
@@ -102,5 +102,5 @@ void HoughTransformer::edges()
 
 std::size_t HoughTransformer::size_round(double value)
 {
-    return static_cast<std::size_t>(round(double))
+    return static_cast<std::size_t>(round(value));
 }

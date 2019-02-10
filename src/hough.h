@@ -2,6 +2,7 @@
 #define _HOUGH_H_
 
 #include <cmath>
+#include <vector>
 
 class HoughTransformer {
 public:
@@ -30,14 +31,10 @@ public:
     ~HoughTransformer();
 
 protected:
-    /*! input data */
-    double* inputSignal;
-    /*! input array length */
-    const std::size_t x_size;
-    /*! input array height */
-    const std::size_t y_size;
     /*! Number of angle in look-up tables */
     std::size_t thetaSize;
+    /*! input data */
+    double* inputSignal;
     /*! Sine look-up table */
     std::vector<double> sinLT;
     /*! Cosine look-up table */
@@ -53,7 +50,7 @@ protected:
     /*! High pass filter (edge detector) */
     void edges();
     /*! Round a double to a size_t */
-    std::size_t size_round(double value)
-}
+    std::size_t size_round(double value);
+};
 
 #endif
