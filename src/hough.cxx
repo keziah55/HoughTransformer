@@ -76,6 +76,7 @@ void HoughTransformer::transform(const double* inputSignal,
             acc[rho][t]++;
         }
     }
+    write(acc);
 }
 
 void HoughTransformer::write(std::vector<std::vector<int>> acc)
