@@ -13,8 +13,8 @@ HoughTransformer::HoughTransformer(const double thetaStep,
                                    const double thetaStop,
                                    const bool endpoint)
 : thetaSize {static_cast<std::size_t>(round((thetaStop-thetaStart)/thetaStep))}
-// , x_values {nullptr}
-// , y_values {nullptr}
+, q_factor {1.}
+, quantized {false}
 {
     // if endpoint was requested, we need one more theta value
     if (endpoint)
@@ -39,6 +39,7 @@ void HoughTransformer::transform(const double* inputSignal,
 {
     if (y_size == 1) {
         quantize(sig_max, x_size, inputSignal);
+        quantized = true;
     }
     else if (y_size > 1)
         edges();
@@ -53,7 +54,6 @@ void HoughTransformer::transform(const double* inputSignal,
 
     // reserve all the space we need for the accumulator
     // access elements: acc[rho][theta]
-    std::vector<std::vector<int>> acc;
     acc.resize(thetaSize);
     for (std::size_t i {0}; i<acc.size(); i++)
         acc[i].resize(acc_width);
@@ -81,10 +81,10 @@ void HoughTransformer::transform(const double* inputSignal,
             acc[t][rho]++;
         }
     }
-    write(acc);
+    write();
 }
 
-void HoughTransformer::write(std::vector<std::vector<int>> acc)
+void HoughTransformer::write()
 {
     // write accumulator to file
     std::ofstream file;
@@ -114,12 +114,12 @@ void HoughTransformer::quantize(const double maximum, const std::size_t steps,
                                 const double* inputSignal)
 {
     // quanization factor
-    double q_factor {steps/maximum};
+    q_factor = steps/maximum;
 
     // populate y_values vector
     for (std::size_t i {0}; i<steps; i++) {
-        std::size_t q {size_round(inputSignal[i]*q_factor)};
-        y_values.push_back(q);
+        std::size_t value {size_round(inputSignal[i]*q_factor)};
+        y_values.push_back(value);
     }
 }
 
@@ -127,11 +127,14 @@ std::pair<double, double> HoughTransformer::unquantize(const double theta,
                                                        const double rho,
                                                        const double q)
 {
+    // calculate original y-intercept and gradient
     double c0 {rho / (q*sin(theta))};
     double m0 {1. / (q*tan(theta))};
+    // therefore, get original theta and rho
     double theta0 {atan(1./m0)};
     double rho0 {c0 * sin(theta0)};
 
+    // return theta and rho as a tuple
     std::pair<double, double> result {std::make_pair(theta0, rho0)};
     return result;
 }
@@ -144,4 +147,22 @@ void HoughTransformer::edges()
 std::size_t HoughTransformer::size_round(double value)
 {
     return static_cast<std::size_t>(round(value));
+}
+
+theta_rho_t HoughTransformer::peaks(const int threshold)
+{
+    theta_rho_t result;
+    std::size_t height {acc.size()};
+    std::size_t width {acc[0].size()};
+
+    for (std::size_t t {0}; t<height; t++) {
+        for (std::size_t r {0}; r<width; r++) {
+            if (acc[t][r] >= threshold) {
+                // make this tuple of theta, rho and acc value?
+                std::pair<double, double> p {unquantize(t, r, q_factor)};
+                result.push_back(p);
+            }
+        }
+    }
+    return result;
 }

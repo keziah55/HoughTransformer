@@ -6,6 +6,7 @@
 #include "hough.h"
 %}
 
+%include std_vector.i 
 %include "numpy.i"
 
 %init %{
