@@ -46,7 +46,8 @@ protected:
     /*! Calculate rho from equation of straight line */
     int getRhoLine(std::size_t x, std::size_t y, std::size_t theta);
     /*! Fill y_values with quantized inputSignal */
-    void quantize(double maximum, std::size_t steps);
+    void quantize(const double maximum, const std::size_t steps,
+                  const double* inputSignal);
     /*! High pass filter (edge detector) */
     void edges();
     /*! Round a double to a size_t */

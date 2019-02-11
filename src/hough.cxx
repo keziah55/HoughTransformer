@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <fstream>
 
+#include <iostream>
+
 #include "hough.h"
 
 HoughTransformer::HoughTransformer(const double thetaStep,
@@ -34,15 +36,16 @@ void HoughTransformer::transform(const double* inputSignal,
                                  const std::size_t x_size,
                                  const std::size_t y_size, const double sig_max)
 {
-    if (y_size == 1)
-        quantize(sig_max, x_size);
+    if (y_size == 1) {
+        quantize(sig_max, x_size, inputSignal);
+    }
     else if (y_size > 1)
         edges();
     else
         throw std::invalid_argument("Input signal must be 1D or 2D.");
 
     // for 1D signal, y_values.size()=x_size, but for 2D signal, they may differ
-    std::size_t r_max = round(sqrt(pow(x_size,2) + pow(y_values.size(),2)));
+    std::size_t r_max {size_round(sqrt(pow(x_size,2) + pow(y_values.size(),2)))};
 
     // accumulator width
     std::size_t acc_width {2*r_max};
@@ -50,9 +53,9 @@ void HoughTransformer::transform(const double* inputSignal,
     // reserve all the space we need for the accumulator
     // access elements: acc[rho][theta]
     std::vector<std::vector<int>> acc;
-    acc.resize(thetaSize);
+    acc.resize(acc_width);
     for (std::size_t i {0}; i<acc.size(); i++)
-        acc[i].resize(acc_width);
+        acc[i].resize(thetaSize);
 
     // x may be read from x_values or inferred from inputSignal indices
     std::size_t x;
@@ -106,7 +109,8 @@ int HoughTransformer::getRhoLine(std::size_t x, std::size_t y,
     return round(rho);
 }
 
-void HoughTransformer::quantize(double maximum, std::size_t steps)
+void HoughTransformer::quantize(const double maximum, const std::size_t steps,
+                                const double* inputSignal)
 {
     // quanization factor
     double q_factor {steps/maximum};
