@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include <utility>
 
 class HoughTransformer {
 public:
@@ -48,6 +49,9 @@ protected:
     /*! Fill y_values with quantized inputSignal */
     void quantize(const double maximum, const std::size_t steps,
                   const double* inputSignal);
+    /*! Get correct theta and rho values by reversing quantization process */
+    std::pair<double, double> unquantize(const double theta, const double rho,
+                                         const double q)
     /*! High pass filter (edge detector) */
     void edges();
     /*! Round a double to a size_t */

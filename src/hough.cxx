@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdexcept>
 #include <fstream>
+#include <utility>
 
 #include <iostream>
 
@@ -120,6 +121,19 @@ void HoughTransformer::quantize(const double maximum, const std::size_t steps,
         std::size_t q {size_round(inputSignal[i]*q_factor)};
         y_values.push_back(q);
     }
+}
+
+std::pair<double, double> HoughTransformer::unquantize(const double theta,
+                                                       const double rho,
+                                                       const double q)
+{
+    double c0 {rho / (q*sin(theta))};
+    double m0 {1. / (q*tan(theta))};
+    double theta0 {atan(1./m0)};
+    double rho0 {c0 * sin(theta0)};
+
+    std::pair<double, double> result {std::make_pair(theta0, rho0)};
+    return result;
 }
 
 void HoughTransformer::edges()
