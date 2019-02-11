@@ -6,9 +6,7 @@
 #include "hough.h"
 %}
 
-
 %include "numpy.i"
-//%include "array2d.i"
 
 %init %{
 import_array();
@@ -21,5 +19,19 @@ import_array();
                                        const std::size_t x_size,
                                        const std::size_t y_size)};
 
+%extend HoughTransformer {
+%rename (transform) transform1D;
+%exception transform1D {
+    $action
+    if (PyErr_Occurred()) SWIG_fail;
+}
+void transform1D(const double* inputSignal, const std::size_t x_size,
+                 const double sig_max=1.)
+{
+    $self->transform(inputSignal, x_size, 1, sig_max);
+}
+}
+
+%ignore HoughTransformer::transform;
 
 %include "hough.h"
