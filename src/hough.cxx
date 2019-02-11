@@ -53,9 +53,9 @@ void HoughTransformer::transform(const double* inputSignal,
     // reserve all the space we need for the accumulator
     // access elements: acc[rho][theta]
     std::vector<std::vector<int>> acc;
-    acc.resize(acc_width);
+    acc.resize(thetaSize);
     for (std::size_t i {0}; i<acc.size(); i++)
-        acc[i].resize(thetaSize);
+        acc[i].resize(acc_width);
 
     // x may be read from x_values or inferred from inputSignal indices
     std::size_t x;
@@ -77,7 +77,7 @@ void HoughTransformer::transform(const double* inputSignal,
         // for all angles, get rho and increment accumulator
         for (std::size_t t {0}; t<thetaSize; t++) {
             rho = static_cast<std::size_t>(getRhoLine(x, y, t) + r_max);
-            acc[rho][t]++;
+            acc[t][rho]++;
         }
     }
     write(acc);
