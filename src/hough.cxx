@@ -149,7 +149,7 @@ std::size_t HoughTransformer::size_round(double value)
     return static_cast<std::size_t>(round(value));
 }
 
-theta_rho_t HoughTransformer::peaks(const int threshold)
+theta_rho_t HoughTransformer::k_peaks(const int threshold)
 {
     theta_rho_t result;
     std::size_t height {acc.size()};

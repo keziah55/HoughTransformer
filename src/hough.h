@@ -31,11 +31,10 @@ public:
                    const std::size_t y_size=1,
                    const double sig_max=1.);
 
-    /*! Get (theta, rho) pairs for all values in the accumulator above a
-     *  given threshold.
-     *  \param threhold Value above which to return line parameters
+    /*! Get (theta, rho) pairs for the k highest values in the accumulator
+     *  \param k Number of peaks to return
      */
-    theta_rho_t peaks(const int threshold);
+    theta_rho_t k_peaks(const int threshold);
 
     ~HoughTransformer();
 
