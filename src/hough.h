@@ -10,26 +10,31 @@ typedef std::vector<std::pair<double, double>>  theta_rho_t;
 class HoughTransformer {
 public:
     /*! Make a HoughTransformer
-    *   \param thetaStep Size of angle to step through (radians). Default is
-    *   pi/180 (i.e. 1 degree).
-    *   \param thetaStart Angle at which to start. Default is zero.
-    *   \param thetaStop Angle at which to end. Default is pi.
-    *   \param endpoint If true, thetaStop will be included. If false, angles
-    *    will go up to, but not include, thetaStop. Default is false.
-    */
+     *  \param thetaStep Size of angle to step through (radians). Default is
+     *  pi/180 (i.e. 1 degree).
+     *  \param thetaStart Angle at which to start. Default is zero.
+     *  \param thetaStop Angle at which to end. Default is pi.
+     *  \param endpoint If true, thetaStop will be included. If false, angles
+     *   will go up to, but not include, thetaStop. Default is false.
+     */
     HoughTransformer(const double thetaStep=M_PI/180.,
                      const double thetaStart=0.,
                      const double thetaStop=M_PI, const bool endpoint=false);
 
     /*! Get the Hough transform of a signal
-    *   \param inputSignal Input array
-    *   \param x_size Array length
-    *   \param y_size Array height. Default is 1.
-    *   \param sig_max Maximum value in input. Default is 1.
-    */
+     *  \param inputSignal Input array
+     *  \param x_size Array length
+     *  \param y_size Array height. Default is 1.
+     *  \param sig_max Maximum value in input. Default is 1.
+     */
     void transform(const double* inputSignal, const std::size_t x_size,
                    const std::size_t y_size=1,
                    const double sig_max=1.);
+
+    /*! Set number of quantization steps
+     *  \param steps Number of quantization steps
+     */
+     void set_q_steps(const std::size_t steps);
 
     /*! Get (theta, rho) pairs for the k highest values in the accumulator
      *  \param k Number of peaks to return
@@ -55,9 +60,12 @@ protected:
     std::vector<std::vector<int>> acc;
     /*! Calculate rho from equation of straight line */
     int getRhoLine(std::size_t x, std::size_t y, std::size_t theta);
-    /*! Fill y_values with quantized inputSignal and set q_factor */
-    void quantize(const double maximum, const std::size_t steps,
-                  const double* inputSignal);
+    /*! Set quantization factor */
+    void set_q_factor(const double maximum);
+    /*! Using q_factor, get quantized value */
+    void quantize(const double value);
+    /*! Number of quantization steps. Default is 1000 */
+    std::size_t q_steps;
     /*! Quantization factor */
     double q_factor;
     /*! Whether data has been quantized */

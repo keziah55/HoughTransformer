@@ -13,6 +13,7 @@ HoughTransformer::HoughTransformer(const double thetaStep,
                                    const double thetaStop,
                                    const bool endpoint)
 : thetaSize {static_cast<std::size_t>(round((thetaStop-thetaStart)/thetaStep))}
+, q_steps {1000}
 , q_factor {1.}
 , quantized {false}
 {
@@ -38,13 +39,16 @@ void HoughTransformer::transform(const double* inputSignal,
                                  const std::size_t y_size, const double sig_max)
 {
     if (y_size == 1) {
-        quantize(sig_max, x_size, inputSignal);
+        set_q_factor(sig_max)
         quantized = true;
     }
     else if (y_size > 1)
         edges();
     else
         throw std::invalid_argument("Input signal must be 1D or 2D.");
+
+    // put make accumulator in separate function, so it can be changed according
+    // to q_steps
 
     // for 1D signal, y_values.size()=x_size, but for 2D signal, they may differ
     std::size_t r_max {size_round(sqrt(pow(x_size,2) + pow(y_values.size(),2)))};
@@ -57,6 +61,8 @@ void HoughTransformer::transform(const double* inputSignal,
     acc.resize(thetaSize);
     for (std::size_t i {0}; i<acc.size(); i++)
         acc[i].resize(acc_width);
+
+    std::cout << "Accumulator size: " << thetaSize << " x " << acc_width << "\n";
 
     // x may be read from x_values or inferred from inputSignal indices
     std::size_t x;
@@ -73,7 +79,7 @@ void HoughTransformer::transform(const double* inputSignal,
             x_idx++;
         }
         // get y
-        y = y_values[i];
+        y = quantize(x);
 
         // for all angles, get rho and increment accumulator
         for (std::size_t t {0}; t<thetaSize; t++) {
@@ -110,17 +116,20 @@ int HoughTransformer::getRhoLine(std::size_t x, std::size_t y,
     return round(rho);
 }
 
-void HoughTransformer::quantize(const double maximum, const std::size_t steps,
-                                const double* inputSignal)
+void HoughTransformer::set_q_steps(const std::size_t steps)
 {
-    // quanization factor
-    q_factor = steps/maximum;
+    q_steps = steps;
+}
 
-    // populate y_values vector
-    for (std::size_t i {0}; i<steps; i++) {
-        std::size_t value {size_round(inputSignal[i]*q_factor)};
-        y_values.push_back(value);
-    }
+void HoughTransformer::set_q_factor(const double maximum)
+{
+    q_factor = q_steps/maximum;
+}
+
+void HoughTransformer::quantize(const double value)
+{
+    return size_round(value*q_factor);
+
 }
 
 std::pair<double, double> HoughTransformer::unquantize(const double theta,
