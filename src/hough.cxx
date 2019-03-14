@@ -36,53 +36,35 @@ HoughTransformer::~HoughTransformer()
 
 void HoughTransformer::transform(const double* inputSignal,
                                  const std::size_t x_size,
-                                 const std::size_t y_size, const double sig_max)
+                                 const double sig_max)
 {
-    if (y_size == 1) {
-        set_q_factor(sig_max)
-        quantized = true;
-    }
-    else if (y_size > 1)
-        edges();
-    else
-        throw std::invalid_argument("Input signal must be 1D or 2D.");
+    // set quantisation factor (with default q_steps=1000)
+    set_q_factor(sig_max);
+    quantized = true;
 
-    // put make accumulator in separate function, so it can be changed according
-    // to q_steps
+    // TODO put make accumulator in separate function, so it can be changed
+    // according to q_steps
 
-    // for 1D signal, y_values.size()=x_size, but for 2D signal, they may differ
-    std::size_t r_max {size_round(sqrt(pow(x_size,2) + pow(y_values.size(),2)))};
+    std::size_t r_max {size_round(sqrt(pow(x_size,2) + pow(q_steps,2)))};
 
     // accumulator width
     std::size_t acc_width {2*r_max};
 
     // reserve all the space we need for the accumulator
-    // access elements: acc[rho][theta]
+    // access elements: acc[theta][rho]
     acc.resize(thetaSize);
     for (std::size_t i {0}; i<acc.size(); i++)
         acc[i].resize(acc_width);
 
     std::cout << "Accumulator size: " << thetaSize << " x " << acc_width << "\n";
+    std::cout << "Accumulator size: " << acc.size() << " x " << acc[0].size() << "\n";
 
-    // x may be read from x_values or inferred from inputSignal indices
-    std::size_t x;
-    std::size_t x_idx {0};
-    std::size_t y;
-    std::size_t rho;
+    int rho;
 
-    for (std::size_t i {0}; i<x_size; i++) {
-        // get appropriate value of x
-        if (x_values.empty())
-            x++;
-        else {
-            x = x_values[x_idx];
-            x_idx++;
-        }
-        // get y
-        y = quantize(x);
-
-        // for all angles, get rho and increment accumulator
-        for (std::size_t t {0}; t<thetaSize; t++) {
+    for (std::size_t x {0}; x<x_size; x++) {
+        // quantize y value
+        std::size_t y = quantize(inputSignal[x]);
+        for (std::size_t t{0}; t<thetaSize; t++) {
             rho = static_cast<std::size_t>(getRhoLine(x, y, t) + r_max);
             acc[t][rho]++;
         }
@@ -126,10 +108,9 @@ void HoughTransformer::set_q_factor(const double maximum)
     q_factor = q_steps/maximum;
 }
 
-void HoughTransformer::quantize(const double value)
+std::size_t HoughTransformer::quantize(const double value)
 {
     return size_round(value*q_factor);
-
 }
 
 std::pair<double, double> HoughTransformer::unquantize(const double theta,
@@ -148,30 +129,7 @@ std::pair<double, double> HoughTransformer::unquantize(const double theta,
     return result;
 }
 
-void HoughTransformer::edges()
-{
-    // fill x_values and y_values with coordinates of valid data in input
-}
-
 std::size_t HoughTransformer::size_round(double value)
 {
     return static_cast<std::size_t>(round(value));
-}
-
-theta_rho_t HoughTransformer::k_peaks(const int threshold)
-{
-    theta_rho_t result;
-    std::size_t height {acc.size()};
-    std::size_t width {acc[0].size()};
-
-    for (std::size_t t {0}; t<height; t++) {
-        for (std::size_t r {0}; r<width; r++) {
-            if (acc[t][r] >= threshold) {
-                // make this tuple of theta, rho and acc value?
-                std::pair<double, double> p {unquantize(t, r, q_factor)};
-                result.push_back(p);
-            }
-        }
-    }
-    return result;
 }

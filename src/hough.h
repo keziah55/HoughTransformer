@@ -24,22 +24,15 @@ public:
     /*! Get the Hough transform of a signal
      *  \param inputSignal Input array
      *  \param x_size Array length
-     *  \param y_size Array height. Default is 1.
      *  \param sig_max Maximum value in input. Default is 1.
      */
     void transform(const double* inputSignal, const std::size_t x_size,
-                   const std::size_t y_size=1,
-                   const double sig_max=1.);
+                const double sig_max);
 
     /*! Set number of quantization steps
      *  \param steps Number of quantization steps
      */
      void set_q_steps(const std::size_t steps);
-
-    /*! Get (theta, rho) pairs for the k highest values in the accumulator
-     *  \param k Number of peaks to return
-     */
-    theta_rho_t k_peaks(const int threshold);
 
     ~HoughTransformer();
 
@@ -52,10 +45,6 @@ protected:
     std::vector<double> sinLT;
     /*! Cosine look-up table */
     std::vector<double> cosLT;
-    /*! Array of x values */
-    std::vector<std::size_t> x_values;
-    /*! Array of y values */
-    std::vector<std::size_t> y_values;
     /*! Accumulator */
     std::vector<std::vector<int>> acc;
     /*! Calculate rho from equation of straight line */
@@ -63,7 +52,7 @@ protected:
     /*! Set quantization factor */
     void set_q_factor(const double maximum);
     /*! Using q_factor, get quantized value */
-    void quantize(const double value);
+    std::size_t quantize(const double value);
     /*! Number of quantization steps. Default is 1000 */
     std::size_t q_steps;
     /*! Quantization factor */
@@ -73,8 +62,6 @@ protected:
     /*! Get correct theta and rho values by reversing quantization process */
     std::pair<double, double> unquantize(const double theta, const double rho,
                                          const double q);
-    /*! High pass filter (edge detector) */
-    void edges();
     /*! Round a double to a size_t */
     std::size_t size_round(double value);
     /*! Write accumulator to csv file */
