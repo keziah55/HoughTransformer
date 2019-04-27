@@ -27,7 +27,7 @@ public:
      *  \param q_steps Number of quantization steps. Default is 1000.
      */
     void transform(const double* inputSignal, const std::size_t x_size,
-                   const std::size_t q_steps=1000.);
+                   const std::size_t q_steps=1000);
 
     ~HoughTransformer();
 
