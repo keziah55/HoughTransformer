@@ -24,44 +24,37 @@ public:
     /*! Get the Hough transform of a signal
      *  \param inputSignal Input array
      *  \param x_size Array length
-     *  \param sig_max Maximum value in input. Default is 1.
+     *  \param q_steps Number of quantization steps. Default is 1000.
      */
     void transform(const double* inputSignal, const std::size_t x_size,
-                const double sig_max);
-
-    /*! Set number of quantization steps
-     *  \param steps Number of quantization steps
-     */
-     void set_q_steps(const std::size_t steps);
+                   const std::size_t q_steps=1000.);
 
     ~HoughTransformer();
 
 protected:
     /*! Number of angle in look-up tables */
     std::size_t thetaSize;
-    /*! input data */
-    double* inputSignal;
     /*! Sine look-up table */
     std::vector<double> sinLT;
     /*! Cosine look-up table */
     std::vector<double> cosLT;
     /*! Accumulator */
     std::vector<std::vector<int>> acc;
+    /*! Quantization factor */
+    double q_factor;
     /*! Calculate rho from equation of straight line */
     int getRhoLine(std::size_t x, std::size_t y, std::size_t theta);
     /*! Set quantization factor */
-    void set_q_factor(const double maximum);
+    void set_q_factor(const double* inputSignal,
+                      const std::size_t x_size,
+                      const std::size_t q_steps);
+    /*! Make accumulator and return r_max */
+    std::size_t make_accumulator(const std::size_t x_size,
+                                 const std::size_t q_steps);
     /*! Using q_factor, get quantized value */
     std::size_t quantize(const double value);
-    /*! Number of quantization steps. Default is 1000 */
-    std::size_t q_steps;
-    /*! Quantization factor */
-    double q_factor;
-    /*! Whether data has been quantized */
-    bool quantized;
     /*! Get correct theta and rho values by reversing quantization process */
-    std::pair<double, double> unquantize(const double theta, const double rho,
-                                         const double q);
+    std::pair<double, double> unquantize(const double theta, const double rho);
     /*! Round a double to a size_t */
     std::size_t size_round(double value);
     /*! Write accumulator to csv file */

@@ -13,9 +13,7 @@ HoughTransformer::HoughTransformer(const double thetaStep,
                                    const double thetaStop,
                                    const bool endpoint)
 : thetaSize {static_cast<std::size_t>(round((thetaStop-thetaStart)/thetaStep))}
-, q_steps {1000}
 , q_factor {1.}
-, quantized {false}
 {
     // if endpoint was requested, we need one more theta value
     if (endpoint)
@@ -36,37 +34,23 @@ HoughTransformer::~HoughTransformer()
 
 void HoughTransformer::transform(const double* inputSignal,
                                  const std::size_t x_size,
-                                 const double sig_max)
+                                 const std::size_t q_steps)
 {
-    // set quantisation factor (with default q_steps=1000)
-    set_q_factor(sig_max);
-    quantized = true;
+    // set quantization factor for this data
+    set_q_factor(inputSignal, x_size, q_steps);
+    // make accumulator for this data
+    std::size_t r_max {make_accumulator(x_size, q_steps)};
 
-    // TODO put make accumulator in separate function, so it can be changed
-    // according to q_steps
-
-    std::size_t r_max {size_round(sqrt(pow(x_size,2) + pow(q_steps,2)))};
-
-    // accumulator width
-    std::size_t acc_width {2*r_max};
-
-    // reserve all the space we need for the accumulator
-    // access elements: acc[theta][rho]
-    acc.resize(thetaSize);
-    for (std::size_t i {0}; i<acc.size(); i++)
-        acc[i].resize(acc_width);
-
-    std::cout << "Accumulator size: " << thetaSize << " x " << acc_width << "\n";
-    std::cout << "Accumulator size: " << acc.size() << " x " << acc[0].size() << "\n";
-
-    int rho;
+    int rho; // for getRhoLine return value
+    std::size_t rho_idx; // value to index accumulator
 
     for (std::size_t x {0}; x<x_size; x++) {
         // quantize y value
         std::size_t y = quantize(inputSignal[x]);
         for (std::size_t t{0}; t<thetaSize; t++) {
-            rho = static_cast<std::size_t>(getRhoLine(x, y, t) + r_max);
-            acc[t][rho]++;
+            rho = getRhoLine(x, y, t);
+            rho_idx = static_cast<std::size_t>(rho + r_max);
+            acc[t][rho_idx]++;
         }
     }
     write();
@@ -80,7 +64,7 @@ void HoughTransformer::write()
 
     // for each row in acc, write every value to file
     for (std::vector<int> v : acc) {
-        for (int i{0}; i<v.size(); i++) {
+        for (std::size_t i{0}; i<v.size(); i++) {
             file << v[i];
             // in order to be read be numpy, commas should separate values,
             // but not appear at the end of a line
@@ -98,14 +82,40 @@ int HoughTransformer::getRhoLine(std::size_t x, std::size_t y,
     return round(rho);
 }
 
-void HoughTransformer::set_q_steps(const std::size_t steps)
+void HoughTransformer::set_q_factor(const double* inputSignal,
+                                    const std::size_t x_size,
+                                    const std::size_t q_steps)
 {
-    q_steps = steps;
+    // find largest number in input
+    double sig_max {0};
+    for (std::size_t i {0}; i<x_size; i++) {
+        double value = std::abs(inputSignal[i]);
+        if (value > sig_max)
+            sig_max = value;
+    }
+    // set quantisation factor
+    q_factor = static_cast<double>(q_steps/sig_max);
 }
 
-void HoughTransformer::set_q_factor(const double maximum)
+std::size_t HoughTransformer::make_accumulator(const std::size_t x_size,
+                                               const std::size_t q_steps)
 {
-    q_factor = q_steps/maximum;
+    std::size_t r_max {size_round(sqrt(pow(x_size,2) + pow(q_steps,2)))};
+
+    // accumulator width
+    std::size_t acc_width {2*r_max};
+
+    // reserve all the space we need for the accumulator
+    // access elements: acc[theta][rho]
+    acc.resize(thetaSize);
+    for (std::size_t i {0}; i<acc.size(); i++)
+        acc[i].resize(acc_width);
+
+    // std::cout << "Accumulator size: " << thetaSize << " x " << acc_width << "\n";
+    std::cout << "Made accumulator of size: " << acc.size() << " x ";
+    std::cout << acc[0].size() << "\n";
+
+    return r_max;
 }
 
 std::size_t HoughTransformer::quantize(const double value)
@@ -114,12 +124,11 @@ std::size_t HoughTransformer::quantize(const double value)
 }
 
 std::pair<double, double> HoughTransformer::unquantize(const double theta,
-                                                       const double rho,
-                                                       const double q)
+                                                       const double rho)
 {
     // calculate original y-intercept and gradient
-    double c0 {rho / (q*sin(theta))};
-    double m0 {1. / (q*tan(theta))};
+    double c0 {rho / (q_factor*sin(theta))};
+    double m0 {1. / (q_factor*tan(theta))};
     // therefore, get original theta and rho
     double theta0 {atan(1./m0)};
     double rho0 {c0 * sin(theta0)};

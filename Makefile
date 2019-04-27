@@ -1,17 +1,21 @@
-# swig -c++ -python hough.i
-# g++ -fPIC -c hough.cxx
-# g++ -fPIC -c hough_wrap.cxx -I/usr/include/python3.5m
-# g++ -shared hough_wrap.o hough.o -o _hough.so
+# swig -c++ -python src/hough.i
+# g++ -fPIC -c src/hough.cxx -o src/hough.o
+# g++ -fPIC -c src/hough_wrap.cxx -I/usr/include/python3.7m -o src/hough_wrap.o
+# g++ -shared src/hough_wrap.o src/hough.o -o src/_hough.so
 
 CC = g++
-INCLUDES = -I/usr/include/python3.5m
+INCLUDES = -I/usr/include/python3.7m
 CFLAGS = -fPIC -c
 SWIG = swig
 SWIGFLAGS = -c++ -python
+PYTHON = python3
 
 SRCDIR = src
 ONAME = hough
 TARGET = $(SRCDIR)/$(ONAME)
+
+DOCDIR = docs
+INSTALLDIR = /usr/local/lib/python3.7/dist-packages
 
 all: $(TARGET)
 
@@ -24,4 +28,15 @@ $(TARGET): $(TARGET).cxx
 .PHONY: clean
 
 clean:
-	rm -f $(TARGET)_wrap.cxx $(TARGET)_wrap.o $(TARGET).o $(SRCDIR)/_$(ONAME).so $(TARGET).py
+	rm -f $(TARGET)_wrap.cxx $(TARGET)_wrap.o $(TARGET).o $(SRCDIR)/_$(ONAME).so $(TARGET).py $(SRCDIR)/documentation.i 
+	rm -rf $(DOCDIR)
+
+docs:
+	mkdir -p $(DOCDIR)
+	doxygen Doxyfile
+	$(PYTHON) ./doxy2swig.py $(DOCDIR)/xml/index.xml $(SRCDIR)/documentation.i
+
+install:
+	sudo mv $(TARGET).py $(INSTALLDIR)
+	sudo mv $(SRCDIR)/_$(ONAME).so $(INSTALLDIR)
+
