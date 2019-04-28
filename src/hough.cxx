@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <utility>
+#include <string>
 
 #include <iostream>
 
@@ -53,14 +54,13 @@ void HoughTransformer::transform(const double* inputSignal,
             acc[t][rho_idx]++;
         }
     }
-    write();
 }
 
-void HoughTransformer::write()
+void HoughTransformer::write(const std::string ofile)
 {
     // write accumulator to file
     std::ofstream file;
-    file.open("hough.csv");
+    file.open(ofile);
 
     // for each row in acc, write every value to file
     for (std::vector<int> v : acc) {

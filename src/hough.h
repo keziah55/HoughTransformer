@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 #include <utility>
+#include <string>
 
 typedef std::vector<std::pair<double, double>>  theta_rho_t;
 
@@ -31,6 +32,12 @@ public:
 
     ~HoughTransformer();
 
+    /*! Get correct theta and rho values by reversing quantization process */
+    std::pair<double, double> unquantize(const double theta, const double rho);
+
+    /*! Write accumulator to csv file */
+    void write(const std::string ofile);
+
 protected:
     /*! Number of angle in look-up tables */
     std::size_t thetaSize;
@@ -53,12 +60,8 @@ protected:
                                  const std::size_t q_steps);
     /*! Using q_factor, get quantized value */
     std::size_t quantize(const double value);
-    /*! Get correct theta and rho values by reversing quantization process */
-    std::pair<double, double> unquantize(const double theta, const double rho);
     /*! Round a double to a size_t */
     std::size_t size_round(double value);
-    /*! Write accumulator to csv file */
-    void write();
 };
 
 #endif
