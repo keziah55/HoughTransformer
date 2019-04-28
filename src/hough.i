@@ -20,4 +20,8 @@ import_array();
 %apply (double* IN_ARRAY1, int DIM1) {(const double* inputSignal,
                                        const std::size_t x_size)};
 
+namespace std {
+%template(theta_rho_pair) pair<double, double>;
+};
+
 %include "hough.h"
