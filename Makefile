@@ -1,6 +1,6 @@
 # swig -c++ -python src/hough.i
 # g++ -fPIC -c src/hough.cxx -o src/hough.o
-# g++ -fPIC -c src/hough_wrap.cxx -I/usr/include/python3.11m -o src/hough_wrap.o
+# g++ -fPIC -c src/hough_wrap.cxx -I/usr/include/python3.11 -I/usr/lib/python3/dist-packages/numpy/core/include/ -o src/hough_wrap.o
 # g++ -shared src/hough_wrap.o src/hough.o -o src/_hough.so
 
 CC = g++
