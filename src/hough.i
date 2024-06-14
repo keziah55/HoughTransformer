@@ -11,7 +11,7 @@
 %include <std_string.i>
 %include "numpy.i"
 
-%include "documentation.i"
+// %include "documentation.i"
 
 %init %{
 import_array();
