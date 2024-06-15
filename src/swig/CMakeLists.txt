@@ -21,9 +21,9 @@ set(UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
 
 set_property(SOURCE hough.i PROPERTY CPLUSPLUS ON)
 
-message("${CMAKE_SOURCE_DIR}/houghsrc")
+message("${CMAKE_SOURCE_DIR}/src")
 
-include_directories("${CMAKE_SOURCE_DIR}/houghsrc" "${Python_INCLUDE_DIRS}")
+include_directories("${CMAKE_SOURCE_DIR}/src" "${Python_INCLUDE_DIRS}" "/usr/lib/python3/dist-packages/numpy/core/include/")
 
 # convenience variable
 set(hough_build_dir ${CMAKE_CURRENT_BINARY_DIR}/hough)
@@ -50,6 +50,6 @@ configure_file(MANIFEST.in ${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in COPYONLY)
 # and make it a module
 install(CODE "file(COPY ${hough_build_dir}/hough.py ${hough_build_dir}/__init__.py)")
 # handle with pip
-install(
-  CODE "execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND ${Python_EXECUTABLE} -m pip install .)"
-)
+# install(
+  # CODE "execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND ${Python_EXECUTABLE} -m pip install .)"
+# )
