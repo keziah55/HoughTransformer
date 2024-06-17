@@ -23,7 +23,14 @@ set_property(SOURCE hough.i PROPERTY CPLUSPLUS ON)
 
 message("${CMAKE_SOURCE_DIR}/src")
 
-include_directories("${CMAKE_SOURCE_DIR}/src" "${Python_INCLUDE_DIRS}" "/usr/lib/python3/dist-packages/numpy/core/include/")
+message("${Python_EXECUTABLE}")
+
+execute_process(
+    COMMAND ${Python_EXECUTABLE} ${CMAKE_SOURCE_DIR}/src/swig/get_numpy_include_path.py
+    OUTPUT_VARIABLE NUMPY_INCLUDE
+)
+
+include_directories("${CMAKE_SOURCE_DIR}/src" "${Python_INCLUDE_DIRS}" "${NUMPY_INCLUDE}")
 
 # convenience variable
 set(hough_build_dir ${CMAKE_CURRENT_BINARY_DIR}/hough)
