@@ -32,5 +32,8 @@ def get_numpy_include_path() -> str:
 
 
 if __name__ == "__main__":
-    p = get_numpy_include_path()
+    try:
+        p = get_numpy_include_path()
+    except Exception:
+        p = ""
     print(p)

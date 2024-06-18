@@ -1,34 +1,19 @@
 find_package(Python COMPONENTS Development Interpreter)
-
-if (Python_FOUND)
-  message(${Python_SITELIB}) # print sitepath
-else()
-  message("No Python found.")
-  return()
-endif()
-
 find_package(SWIG)
 include(UseSWIG)
-
-if(SWIG_FOUND)
-  message("Found SWIG ${SWIG_VERSION}")
-else()
-  message("No SWIG found.")
-  return()
-endif()
 
 set(UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
 
 set_property(SOURCE hough.i PROPERTY CPLUSPLUS ON)
 
-message("${CMAKE_SOURCE_DIR}/src")
-
-message("${Python_EXECUTABLE}")
-
 execute_process(
     COMMAND ${Python_EXECUTABLE} ${CMAKE_SOURCE_DIR}/src/swig/get_numpy_include_path.py
     OUTPUT_VARIABLE NUMPY_INCLUDE
 )
+
+if (NOT NUMPY_INCLUDE) 
+  message("Could not find NumPy include path")
+endif()
 
 include_directories("${CMAKE_SOURCE_DIR}/src" "${Python_INCLUDE_DIRS}" "${NUMPY_INCLUDE}")
 
@@ -38,7 +23,7 @@ set(hough_build_dir ${CMAKE_CURRENT_BINARY_DIR}/hough)
 swig_add_library(hough
   TYPE SHARED
   LANGUAGE python
-  OUTPUT_DIR ${hough_build_dir} # important! else find_packages() wont find
+  OUTPUT_DIR ${hough_build_dir}
   SOURCES hough.i
 )
 

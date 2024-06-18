@@ -37,7 +37,6 @@ void HoughTransformer::transform(const double* inputSignal,
                                  const std::size_t x_size,
                                  const std::size_t q_steps)
 {
-    std::cout << "transform x_size = " << x_size << " q_steps = " << q_steps << std::endl;
     // set quantization factor for this data
     set_q_factor(inputSignal, x_size, q_steps);
     // make accumulator for this data
@@ -112,18 +111,15 @@ std::size_t HoughTransformer::make_accumulator(const std::size_t x_size,
     for (std::size_t i {0}; i<acc.size(); i++)
         acc[i].resize(acc_width);
 
-    // std::cout << "Accumulator size: " << thetaSize << " x " << acc_width << "\n";
-    std::cout << "Made accumulator of size: " << acc.size() << " x ";
-    std::cout << acc[0].size() << "\n";
+    // std::cout << "Made accumulator of size: " << acc.size() << " x ";
+    // std::cout << acc[0].size() << "\n";
 
     return r_max;
 }
 
 std::size_t HoughTransformer::quantize(const double value)
 {
-    auto result = size_round(value*q_factor);
-    std::cout << "quantizing value " << value << " with q_factor " << q_factor << " returning " << result << std::endl;
-    return result; // size_round(value*q_factor);
+    return size_round(value*q_factor);
 }
 
 std::pair<double, double> HoughTransformer::unquantize(const double theta,
