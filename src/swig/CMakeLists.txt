@@ -20,6 +20,8 @@ include_directories("${CMAKE_SOURCE_DIR}/src" "${Python_INCLUDE_DIRS}" "${NUMPY_
 # convenience variable
 set(hough_build_dir ${CMAKE_CURRENT_BINARY_DIR}/hough)
 
+message("${hough_build_dir}")
+
 swig_add_library(hough
   TYPE SHARED
   LANGUAGE python
@@ -42,6 +44,6 @@ configure_file(MANIFEST.in ${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in COPYONLY)
 # and make it a module
 install(CODE "file(COPY ${hough_build_dir}/hough.py ${hough_build_dir}/__init__.py)")
 # handle with pip
-# install(
-  # CODE "execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND ${Python_EXECUTABLE} -m pip install .)"
-# )
+install(
+  CODE "execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND ${Python_EXECUTABLE} -m pip install .)"
+)
