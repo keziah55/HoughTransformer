@@ -42,7 +42,7 @@ configure_file(setup.py ${CMAKE_CURRENT_BINARY_DIR}/setup.py COPYONLY)
 configure_file(MANIFEST.in ${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in COPYONLY)
 
 # and make it a module
-install(CODE "file(COPY ${hough_build_dir}/hough.py ${hough_build_dir}/__init__.py)")
+install(CODE "file(COPY_FILE ${hough_build_dir}/hough.py ${hough_build_dir}/__init__.py)")
 # handle with pip
 install(
   CODE "execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND ${Python_EXECUTABLE} -m pip install .)"
