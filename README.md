@@ -6,19 +6,28 @@ Get the Hough transform of a signal.
 
 ## Installation
 
-To build the documentation:
+`HoughTransformer` is built with [cmake](https://cmake.org/) and uses 
+[SWIG](https://www.swig.org/) to generate Python bindings. 
+It also requires [numpy](https://numpy.org/), as numpy arrays are passed to the 
+`HoughTransform` functions in the Python bindings.
+
+Building requires the path to the numpy `include` directory. It is recommended to create
+and activate a Python [virtual environment](https://docs.python.org/3/tutorial/venv.html)
+before building, so that it picks up the latest numpy version. If you don't want to build
+using a virtual environment, you'll need numpy installed on your system.
+
+To build:
 ```
-make docs
+mkdir build
+cd build
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install 
+python -m pip install numpy build wheel
+cmake ..
+cmake --build .
 ```
 
-Then simply run
-```
-make
-```
-to build the package and generate Python bindings.
+This builds Python wrappers in `build/src/swig/hough.py`.
 
-```
-make install 
-```
-will move the Python bindings to /usr/local/lib/python3.7/dist-packages
-
+TODO: install in venv via pip.
