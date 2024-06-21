@@ -1,10 +1,18 @@
 #ifndef _HOUGH_H_
 #define _HOUGH_H_
 
+
 #include <cmath>
 #include <vector>
 #include <utility>
 #include <string>
+
+// msvc doesn't have M_PI and for some reason `#define _USE_MATH_DEFINES` doesn't work
+// so do this instead:
+#ifndef M_PI
+    #define M_PI 3.141592653589793
+#endif
+
 
 typedef std::vector<std::pair<double, double>>  theta_rho_t;
 
