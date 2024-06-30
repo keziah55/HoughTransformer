@@ -22,12 +22,11 @@ mkdir build
 cd build
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install 
 python -m pip install numpy build wheel
 cmake ..
 cmake --build .
 ```
 
-This builds Python wrappers in `build/src/swig/hough.py`.
+This builds Python wrappers in `build/src/` and can be installed in another virtual
+environment with `python -m pip install path/to/HoughTransformer/build/src`.
 
-TODO: install in venv via pip.

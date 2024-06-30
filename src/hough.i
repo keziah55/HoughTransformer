@@ -24,4 +24,4 @@ namespace std {
 %template(theta_rho_pair) pair<double, double>;
 };
 
-%include "../hough.h"
+%include "hough.h"
