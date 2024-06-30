@@ -14,7 +14,9 @@ It also requires [numpy](https://numpy.org/), as numpy arrays are passed to the
 Building requires the path to the numpy `include` directory. It is recommended to create
 and activate a Python [virtual environment](https://docs.python.org/3/tutorial/venv.html)
 before building, so that it picks up the latest numpy version. If you don't want to build
-using a virtual environment, you'll need numpy installed on your system.
+using a virtual environment, you'll need numpy installed on your system (and you'll need
+to make sure that the numpy version you build against is the same as the one you'll use
+`HoughTransformer` with).
 
 To build:
 ```
@@ -27,6 +29,9 @@ cmake ..
 cmake --build .
 ```
 
-This builds Python wrappers in `build/src/` and can be installed in another virtual
-environment with `python -m pip install path/to/HoughTransformer/build/src`.
+This builds Python wrappers in `build/src/` which can be installed in another virtual
+environment with 
+```
+python -m pip install path/to/HoughTransformer/build/src
+```
 
