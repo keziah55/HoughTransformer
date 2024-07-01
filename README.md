@@ -20,8 +20,7 @@ to make sure that the numpy version you build against is the same as the one you
 
 To build, including wheel:
 ```bash
-mkdir build
-cd build
+mkdir build && cd build
 # setup venv
 python -m venv .venv
 source .venv/bin/activate
