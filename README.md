@@ -26,7 +26,7 @@ cd build
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install numpy build wheel
-# bulid
+# build
 cmake ..
 cmake --build .
 # build python wheel
