@@ -4,8 +4,6 @@ set(houghsrc hough.cxx)
 
 add_library(houghlib STATIC ${houghsrc})
 
-# add_subdirectory(swig)
-
 find_package(Python COMPONENTS Development Interpreter)
 find_package(SWIG)
 include(UseSWIG)
@@ -28,8 +26,6 @@ include_directories("${CMAKE_SOURCE_DIR}/src" "${Python_INCLUDE_DIRS}" "${NUMPY_
 # convenience variable
 set(hough_build_dir ${CMAKE_CURRENT_BINARY_DIR}/hough)
 
-message("${hough_build_dir}")
-
 swig_add_library(hough
   TYPE SHARED
   LANGUAGE python
@@ -49,10 +45,3 @@ target_link_libraries(hough PRIVATE houghlib ${Python_LIBRARIES})
 configure_file(setup.py ${CMAKE_CURRENT_BINARY_DIR}/setup.py COPYONLY)
 configure_file(__init__.py ${hough_build_dir}/__init__.py COPYONLY)
 configure_file(MANIFEST.in ${CMAKE_CURRENT_BINARY_DIR}/MANIFEST.in COPYONLY)
-
-# and make it a module
-install(CODE "file(COPY_FILE ${hough_build_dir}/hough.py ${hough_build_dir}/__init__.py)")
-# handle with pip
-install(
-  CODE "execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMAND ${Python_EXECUTABLE} -m pip install .)"
-)
