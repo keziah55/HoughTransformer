@@ -1,4 +1,7 @@
-message("Standard: ${CMAKE_CXX_STANDARD}")
+message("Using C++ standard: ${CMAKE_CXX_STANDARD}")
+
+set(gcc_like_cxx "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
+set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
 
 set(houghsrc hough.cxx)
 
@@ -33,7 +36,13 @@ swig_add_library(hough
   SOURCES hough.i
 )
 
-# set_property(TARGET hough PROPERTY SUFFIX ".so")
+if (gcc_like_cxx)
+  set_property(TARGET hough PROPERTY SUFFIX ".so")
+elseif (msvc_cxx) 
+  set_property(TARGET hough PROPERTY SUFFIX ".dll")
+else ()
+  message("Unrecognised compiler")
+endif()
 # and again, so that the .so file is in the right place
 set_property(TARGET hough PROPERTY LIBRARY_OUTPUT_DIRECTORY ${hough_build_dir})
 
