@@ -29,9 +29,19 @@ cmake ..
 cmake --build .
 ```
 
-This builds Python wrappers in `build/src/` which can be installed in another virtual
-environment with 
+This builds Python wrappers in `build/src/` which can be installed directly 
+in another virtual environment with 
 ```
 python -m pip install path/to/HoughTransformer/build/src
+```
+Alternatively, build a wheel 
+```
+cd path/to/HoughTransformer/build/src
+python -m build
+```
+This creates a `hough-0.1-py3-none-any.whl` file (and tarball) in `dist`, which can be
+pip installed
+```
+python -m pip install path/to/HoughTransformer/build/src/dst/hough-0.1-py3-none-any.whl
 ```
 
