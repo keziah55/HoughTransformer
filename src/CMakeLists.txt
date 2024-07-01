@@ -33,7 +33,7 @@ swig_add_library(hough
   SOURCES hough.i
 )
 
-set_property(TARGET hough PROPERTY SUFFIX ".so")
+# set_property(TARGET hough PROPERTY SUFFIX ".so")
 # and again, so that the .so file is in the right place
 set_property(TARGET hough PROPERTY LIBRARY_OUTPUT_DIRECTORY ${hough_build_dir})
 
