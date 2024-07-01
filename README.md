@@ -19,7 +19,7 @@ to make sure that the numpy version you build against is the same as the one you
 `HoughTransformer` with).
 
 To build, including wheel:
-```
+```bash
 mkdir build
 cd build
 # setup venv
