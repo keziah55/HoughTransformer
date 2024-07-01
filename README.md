@@ -18,26 +18,22 @@ using a virtual environment, you'll need numpy installed on your system (and you
 to make sure that the numpy version you build against is the same as the one you'll use
 `HoughTransformer` with).
 
-To build:
+To build, including wheel:
 ```
 mkdir build
 cd build
+# setup venv
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install numpy build wheel
+# bulid
 cmake ..
 cmake --build .
+# build python wheel
+cd src
+python -m build
 ```
 
-This builds Python wrappers in `build/src/` which can be installed directly 
-in another virtual environment with 
-```
-python -m pip install path/to/HoughTransformer/build/src
-```
-Alternatively, build a wheel 
-```
-cd path/to/HoughTransformer/build/src
-python -m build
 ```
 This creates a `hough-0.1-py3-none-any.whl` file (and tarball) in `dist`, which can be
 pip installed
